@@ -1,45 +1,104 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
-import { Button } from '../../components/common/Button';
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  AlertCircle,
-  Building2,
-  Users,
-  ShieldCheck,
-  Zap,
-  CheckCircle2,
-  ArrowRight,
-  Sparkles,
-} from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, Volume2 } from 'lucide-react';
 
-export const LoginPage = () => {
+export const LoginPage = ({ initialMode }) => {
   const navigate = useNavigate();
-  const { login, googleLogin } = useAuth();
+  const location = useLocation();
+  const { login, register, googleLogin } = useAuth();
 
+  // Mode: 'login' or 'register' (dynamically initialized by route or prop)
+  const [mode, setMode] = useState(
+    initialMode || (location.pathname === '/organization/register' ? 'register' : 'login')
+  );
+
+  // Sync mode if route changes
+  useEffect(() => {
+    if (location.pathname === '/organization/register') {
+      setMode('register');
+    } else if (location.pathname === '/organization/login') {
+      setMode('login');
+    }
+  }, [location.pathname]);
+
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [chimePlayed, setChimePlayed] = useState(false);
+
+  // Synthesized Web Audio chime on clicking "Your turn" preview
+  const playPreviewChime = () => {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.8);
+      setChimePlayed(true);
+      setTimeout(() => setChimePlayed(false), 2000);
+    } catch (e) {
+      console.warn('Audio chime preview failed:', e);
+    }
+  };
+
+  const handleTabSwitch = (newMode) => {
+    setMode(newMode);
+    setError('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    try {
-      setLoading(true);
-      await login(email.trim(), password);
-      navigate('/organization/dashboard');
-    } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
-    } finally {
-      setLoading(false);
+    if (mode === 'register') {
+      if (!name.trim()) {
+        setError('Please enter your full name.');
+        return;
+      }
+      if (password.length < 6) {
+        setError('Password must be at least 6 characters long.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError('Passwords do not match.');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        await register(name.trim(), email.trim(), password);
+        navigate('/organization/setup');
+      } catch (err) {
+        setError(err.message || 'Registration failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      try {
+        setLoading(true);
+        await login(email.trim(), password);
+        navigate('/organization/dashboard');
+      } catch (err) {
+        setError(err.message || 'Login failed. Please check your credentials.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -66,103 +125,518 @@ export const LoginPage = () => {
   });
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 sm:p-6 lg:p-12 overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
-      {/* Ambient background glow effects */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 -right-32 w-96 h-96 bg-indigo-500/10 dark:bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative min-h-screen w-full bg-[#F5F2EB] flex flex-col justify-between p-6 sm:p-10 lg:p-12 text-[#1C2520] selection:bg-[#184E38] selection:text-white overflow-hidden">
+      {/* Ambient Floating Glow Blobs */}
+      <motion.div
+        className="absolute -top-32 -left-32 w-96 h-96 bg-[#EBE4D5]/60 rounded-full blur-3xl pointer-events-none"
+        animate={{
+          x: [0, 30, -20, 0],
+          y: [0, 40, -10, 0],
+          scale: [1, 1.08, 0.96, 1],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute -bottom-36 -right-36 w-[450px] h-[450px] bg-[#E8E0CE]/50 rounded-full blur-3xl pointer-events-none"
+        animate={{
+          x: [0, -40, 20, 0],
+          y: [0, -30, 15, 0],
+          scale: [1, 1.05, 0.95, 1],
+        }}
+        transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
+      />
 
-      <div className="w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-        {/* Left Side: Product Showcase (Hidden on small screens) */}
-        <div className="hidden lg:flex lg:col-span-5 flex-col justify-between p-8 bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-3xl shadow-2xl shadow-blue-500/20 relative overflow-hidden min-h-[580px]">
-          {/* Subtle background graphics */}
-          <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
-          <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-indigo-400/20 rounded-full blur-2xl" />
+      {/* Top Header / Logo with Interactive Audio-Wave Equalizer */}
+      <motion.header
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-7xl mx-auto flex items-center justify-between relative z-10"
+      >
+        <Link to="/" className="inline-flex items-center gap-2.5 group">
+          {/* Animated Waveform Pill Icon */}
+          <div className="w-8 h-8 rounded-full bg-[#184E38] flex items-center justify-center gap-[2.5px] px-1.5 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
+            {[
+              { height: '6px', duration: 1.1, delay: 0 },
+              { height: '13px', duration: 0.9, delay: 0.15 },
+              { height: '17px', duration: 1.3, delay: 0.3 },
+              { height: '11px', duration: 0.85, delay: 0.45 },
+              { height: '6px', duration: 1.2, delay: 0.6 },
+            ].map((bar, idx) => (
+              <motion.span
+                key={idx}
+                className="w-[2px] bg-white rounded-full origin-center"
+                animate={{
+                  scaleY: [1, 1.6, 0.7, 1.3, 1],
+                  opacity: [0.85, 1, 0.7, 0.95, 0.85],
+                }}
+                transition={{
+                  duration: bar.duration,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: bar.delay,
+                }}
+                style={{ height: bar.height }}
+              />
+            ))}
+          </div>
+          <span className="font-semibold text-lg tracking-tight text-[#184E38] group-hover:text-[#123E2C] transition-colors">
+            Queueless
+          </span>
+        </Link>
+      </motion.header>
 
-          <div className="relative z-10">
-            {/* Tag */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-semibold text-white uppercase tracking-wider mb-6">
-              <Zap className="w-3.5 h-3.5 text-amber-300" />
-              <span>Queue Management Platform</span>
-            </div>
+      {/* Main 2-Column Content */}
+      <main className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center my-auto py-8 lg:py-12 relative z-10">
+        {/* Left Column: Brand Hero & Live Animated Timeline */}
+        <section className="lg:col-span-7 flex flex-col justify-between">
+          <div>
+            {/* Eyebrow with Blur-to-Sharp Fade */}
+            <motion.p
+              initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-[11px] font-bold tracking-[0.2em] text-[#3F6451] uppercase mb-5 inline-flex items-center gap-2"
+            >
+              <span>MORE TIME FOR WHAT MATTERS</span>
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#184E38]/60 animate-ping" />
+            </motion.p>
 
-            <h2 className="text-3xl font-black tracking-tight leading-tight">
-              Eliminate physical waitlines with intelligent virtual queues.
-            </h2>
-            <p className="text-blue-100 text-sm mt-3 leading-relaxed">
-              Power your business operations with zero waiting room congestion, real-time turn notifications, and multi-service counters.
-            </p>
+            {/* Editorial Serif Headline */}
+            <h1 className="font-serif text-5xl sm:text-6xl lg:text-[62px] font-normal text-[#1A231F] leading-[1.08] tracking-tight">
+              <motion.span
+                className="inline-block"
+                initial={{ opacity: 0, y: 28, filter: 'blur(6px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Your day shouldn’t
+              </motion.span>{' '}
+              <br />
+              <motion.span
+                className="inline-block"
+                initial={{ opacity: 0, y: 28, filter: 'blur(6px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 0.8, delay: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              >
+                have to stand still.
+              </motion.span>
+            </h1>
 
-            <div className="mt-8 space-y-3.5">
-              <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15">
-                <div className="text-xs font-bold text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-                  No Hardware or Kiosks Required
-                </div>
-                <p className="text-[11px] text-blue-200 mt-1 pl-6">
-                  Run directly from any tablet, phone, or laptop browser.
-                </p>
-              </div>
-
-              <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15">
-                <div className="text-xs font-bold text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-                  Instant Customer Satisfaction
-                </div>
-                <p className="text-[11px] text-blue-200 mt-1 pl-6">
-                  Customers wait wherever they want and receive real-time audio & visual chimes.
-                </p>
-              </div>
-            </div>
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.45, ease: 'easeOut' }}
+              className="mt-6 text-base sm:text-lg text-[#59665F] font-normal leading-relaxed max-w-md"
+            >
+              Join the queue from wherever you are. We’ll keep your place and let you know when it’s time to go.
+            </motion.p>
           </div>
 
-          {/* Feature List */}
-          <div className="relative z-10 pt-6 border-t border-white/15 space-y-2.5 text-xs text-blue-100 font-medium">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-              <span>100% Guest Customers — No App Download</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-              <span>Sub-Second WebSocket Delta Updates</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-              <span>Strict FIFO Ordering & Single Active Counter</span>
-            </div>
-          </div>
-        </div>
+          {/* Interactive Live Queue Timeline Doodle */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="mt-14 sm:mt-20 max-w-md"
+          >
+            <div className="relative w-full bg-[#FAF8F3]/60 backdrop-blur-xs p-4 rounded-2xl border border-stone-200/50 shadow-2xs">
+              <svg
+                viewBox="0 0 380 90"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-full h-auto overflow-visible"
+              >
+                {/* Baseline Axis Line */}
+                <motion.path
+                  d="M 18 36 L 18 68 Q 18 78 32 78 L 360 78"
+                  stroke="#2D5A43"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.8, delay: 0.6, ease: 'easeInOut' }}
+                />
 
-        {/* Right Side: Login Card */}
-        <div className="lg:col-span-7 w-full max-w-md mx-auto">
-          <div className="bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl p-8 sm:p-10 border border-slate-200/80 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-black/60 transition-all">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-blue-500/25 mb-4">
-                <Building2 className="w-6 h-6" />
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                Welcome back
-              </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5">
-                Sign in to operate your business queues and call next turns.
-              </p>
+                {/* Self-Drawing Wave Curve */}
+                <motion.path
+                  id="queue-wave-path"
+                  d="M 28 42 C 75 56, 120 32, 160 42 C 200 52, 245 32, 285 38 C 310 34, 325 42, 340 45"
+                  stroke="#2D5A43"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  fill="none"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 1.2, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                />
+
+                {/* Animated Traveling Customer Pulse Along the Wave Curve */}
+                <motion.circle
+                  r="4.5"
+                  fill="#184E38"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.5"
+                  animate={{
+                    cx: [28, 90, 160, 220, 285, 340],
+                    cy: [42, 40, 42, 45, 38, 45],
+                    scale: [1, 1.25, 1, 1.2, 1, 1.5],
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    repeatDelay: 1.2,
+                  }}
+                  className="shadow-sm"
+                />
+
+                {/* Node 1: Joined remotely */}
+                <motion.g
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 20, delay: 0.9 }}
+                >
+                  <circle cx="28" cy="42" r="8" fill="#E2EDE7" stroke="#2D5A43" strokeWidth="2.5" />
+                  <circle cx="28" cy="42" r="3" fill="#2D5A43" />
+                </motion.g>
+
+                {/* Node 2: 12 min saved (Gentle Levitating Float) */}
+                <motion.g
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{
+                    scale: 1,
+                    opacity: 1,
+                    y: [0, -3.5, 0],
+                  }}
+                  transition={{
+                    scale: { type: 'spring', stiffness: 350, damping: 20, delay: 1.2 },
+                    opacity: { duration: 0.3, delay: 1.2 },
+                    y: { duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: 1.4 },
+                  }}
+                >
+                  <circle cx="190" cy="45" r="8" fill="#F8A084" stroke="#D95D39" strokeWidth="2.5" />
+                </motion.g>
+
+                {/* Node 3: Your turn (Interactive with Pulsing Radar Ring & Sound Preview!) */}
+                <motion.g
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 20, delay: 1.5 }}
+                  onClick={playPreviewChime}
+                  className="cursor-pointer group"
+                >
+                  {/* Outer Pulsing Green Radar Wave */}
+                  <motion.circle
+                    cx="340"
+                    cy="45"
+                    r="8"
+                    stroke="#2D5A43"
+                    strokeWidth="1.5"
+                    fill="none"
+                    animate={{
+                      scale: [1, 2.2],
+                      opacity: [0.75, 0],
+                    }}
+                    transition={{
+                      duration: 2.2,
+                      repeat: Infinity,
+                      ease: 'easeOut',
+                    }}
+                  />
+                  <circle
+                    cx="340"
+                    cy="45"
+                    r="8"
+                    fill="#E2EDE7"
+                    stroke="#2D5A43"
+                    strokeWidth="2.5"
+                    className="group-hover:fill-emerald-200 transition-colors"
+                  />
+                  <circle cx="340" cy="45" r="3" fill="#2D5A43" />
+                </motion.g>
+              </svg>
+
+              {/* Waypoint Labels */}
+              <motion.div
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.4 }}
+                className="flex justify-between items-center text-[11px] font-medium text-[#4D5D55] pt-1.5 px-1"
+              >
+                <span className="-ml-1">Joined remotely</span>
+                <span className="text-[#3D4C44] font-semibold">12 min saved</span>
+                <button
+                  type="button"
+                  onClick={playPreviewChime}
+                  className="inline-flex items-center gap-1 text-[#184E38] font-bold hover:underline cursor-pointer focus:outline-none"
+                  title="Click to test chime sound"
+                >
+                  <span>Your turn</span>
+                  <Volume2 className={`w-3.5 h-3.5 ${chimePlayed ? 'text-emerald-600 animate-bounce' : 'text-[#184E38]'}`} />
+                </button>
+              </motion.div>
             </div>
+          </motion.div>
+        </section>
 
-            {error && (
-              <div className="p-3.5 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-2xl text-rose-700 dark:text-rose-300 text-xs flex items-start gap-2.5 mb-6 animate-in fade-in duration-150">
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <div className="flex flex-col items-center justify-center mb-6">
+        {/* Right Column: Unified Morphing Auth Card */}
+        <section className="lg:col-span-5 flex justify-center lg:justify-end">
+          <motion.div
+            initial={{ opacity: 0, y: 32, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.75, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full max-w-[420px] bg-white rounded-[32px] p-8 sm:p-10 shadow-[0_25px_60px_-15px_rgba(25,35,30,0.08)] border border-stone-100/90 transition-all hover:shadow-[0_30px_70px_-10px_rgba(25,35,30,0.12)]"
+          >
+            {/* Sliding Pill Tab Switcher */}
+            <div className="flex p-1 bg-stone-100/80 rounded-2xl mb-6 border border-stone-200/50">
               <button
+                type="button"
+                onClick={() => handleTabSwitch('login')}
+                className={`relative flex-1 py-2 text-xs font-semibold rounded-xl transition-colors cursor-pointer ${
+                  mode === 'login' ? 'text-[#184E38]' : 'text-stone-500 hover:text-stone-800'
+                }`}
+              >
+                {mode === 'login' && (
+                  <motion.div
+                    layoutId="auth-tab-pill"
+                    className="absolute inset-0 bg-white rounded-xl shadow-xs"
+                    transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">Sign in</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleTabSwitch('register')}
+                className={`relative flex-1 py-2 text-xs font-semibold rounded-xl transition-colors cursor-pointer ${
+                  mode === 'register' ? 'text-[#184E38]' : 'text-stone-500 hover:text-stone-800'
+                }`}
+              >
+                {mode === 'register' && (
+                  <motion.div
+                    layoutId="auth-tab-pill"
+                    className="absolute inset-0 bg-white rounded-xl shadow-xs"
+                    transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">Create account</span>
+              </button>
+            </div>
+
+            {/* Header with AnimatePresence */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={mode}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h2 className="font-serif text-3xl sm:text-[34px] font-normal text-[#1A231E] tracking-tight">
+                  {mode === 'login' ? 'Welcome back' : 'Create an account'}
+                </h2>
+                <p className="text-[13px] text-[#65736B] mt-1.5 font-normal leading-relaxed">
+                  {mode === 'login'
+                    ? 'Sign in to check your place and keep your day moving.'
+                    : 'Start managing your business queues in minutes.'}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Error Message with Smooth Expand */}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: -8 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                  className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-start gap-2 overflow-hidden shadow-2xs"
+                >
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Unified Form */}
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+              {/* Full Name Field (Register Mode Only) */}
+              <AnimatePresence initial={false}>
+                {mode === 'register' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <label className="block text-[12px] font-medium text-[#37433C] mb-1.5">
+                      Full name
+                    </label>
+                    <input
+                      type="text"
+                      required={mode === 'register'}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Dr. Sarah Connor"
+                      className="w-full px-3.5 py-2.5 bg-white border border-stone-200 rounded-xl text-sm text-[#1A231E] placeholder:text-stone-300 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all duration-200 shadow-2xs"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Email Address */}
+              <div>
+                <label className="block text-[12px] font-medium text-[#37433C] mb-1.5">
+                  Email address
+                </label>
+                <div className="relative group">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full px-3.5 py-2.5 bg-white border border-stone-200 rounded-xl text-sm text-[#1A231E] placeholder:text-stone-300 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all duration-200 shadow-2xs"
+                  />
+                </div>
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block text-[12px] font-medium text-[#37433C] mb-1.5">
+                  Password
+                </label>
+                <div className="relative group">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={mode === 'register' ? 'At least 6 characters' : '••••••••'}
+                    className="w-full pl-3.5 pr-10 py-2.5 bg-white border border-stone-200 rounded-xl text-sm text-[#1A231E] placeholder:text-stone-300 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all duration-200 shadow-2xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors focus:outline-none p-1"
+                    title={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password Field (Register Mode Only) */}
+              <AnimatePresence initial={false}>
+                {mode === 'register' && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <label className="block text-[12px] font-medium text-[#37433C] mb-1.5">
+                      Confirm password
+                    </label>
+                    <div className="relative group">
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        required={mode === 'register'}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Re-enter password"
+                        className="w-full pl-3.5 pr-10 py-2.5 bg-white border border-stone-200 rounded-xl text-sm text-[#1A231E] placeholder:text-stone-300 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all duration-200 shadow-2xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors focus:outline-none p-1"
+                        title={showConfirmPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Options Row (Login Mode Only) */}
+              {mode === 'login' && (
+                <div className="flex items-center justify-between text-xs pt-1">
+                  <label className="flex items-center gap-2 cursor-pointer text-[#5C6861] select-none group">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-3.5 h-3.5 rounded border-stone-300 text-[#184E38] focus:ring-[#184E38] accent-[#184E38] transition-transform active:scale-95"
+                    />
+                    <span className="group-hover:text-stone-700 transition-colors">Remember me</span>
+                  </label>
+                  <Link
+                    to="/organization/login"
+                    className="text-[#184E38] hover:underline font-medium transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              )}
+
+              {/* Primary Action Button */}
+              <motion.button
+                type="submit"
+                disabled={loading}
+                whileHover={{ scale: 1.012, y: -1 }}
+                whileTap={{ scale: 0.985 }}
+                className="relative overflow-hidden w-full mt-4 py-3 px-4 bg-[#184E38] hover:bg-[#123E2C] text-white rounded-xl font-medium text-sm transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 cursor-pointer"
+              >
+                {/* Light Shimmer Sweep Animation */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 pointer-events-none"
+                  animate={{
+                    x: ['-120%', '200%'],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    repeatDelay: 3.5,
+                    duration: 1.4,
+                    ease: 'easeInOut',
+                  }}
+                />
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  {loading
+                    ? mode === 'login'
+                      ? 'Signing in...'
+                      : 'Creating account...'
+                    : mode === 'login'
+                    ? 'Sign in'
+                    : 'Create account'}
+                </span>
+              </motion.button>
+
+              {/* OR Divider */}
+              <div className="relative flex items-center justify-center my-4">
+                <div className="border-t border-stone-200/90 w-full" />
+                <span className="bg-white px-3 text-[10px] font-semibold uppercase tracking-wider text-stone-400 absolute">
+                  OR
+                </span>
+              </div>
+
+              {/* Google Button */}
+              <motion.button
                 type="button"
                 onClick={() => handleGoogleSignIn()}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-xl font-semibold text-sm shadow-xs transition-all duration-150 disabled:opacity-50 active:scale-[0.99] cursor-pointer"
+                whileHover={{ scale: 1.012, y: -0.5 }}
+                whileTap={{ scale: 0.985 }}
+                className="w-full flex items-center justify-center gap-2.5 py-2.5 px-4 bg-white hover:bg-stone-50/90 text-stone-700 border border-stone-200 hover:border-stone-300 rounded-xl font-medium text-xs transition-all duration-200 shadow-2xs hover:shadow-xs disabled:opacity-50 cursor-pointer"
               >
-                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -180,98 +654,47 @@ export const LoginPage = () => {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                   />
                 </svg>
-                <span>Sign in with Google</span>
-              </button>
-            </div>
+                <span>Continue with Google</span>
+              </motion.button>
 
-            {/* Divider */}
-            <div className="relative flex items-center justify-center my-6">
-              <div className="border-t border-slate-200 dark:border-slate-800 w-full" />
-              <span className="bg-white dark:bg-slate-900 px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 absolute">
-                Or sign in with email
-              </span>
-            </div>
-
-            {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="owner@company.com"
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-xs"
-                  />
-                </div>
+              {/* Mode Switch Prompt */}
+              <div className="pt-2 text-center text-xs text-stone-600">
+                {mode === 'login' ? (
+                  <>
+                    New to Queueless?{' '}
+                    <button
+                      type="button"
+                      onClick={() => handleTabSwitch('register')}
+                      className="font-semibold text-[#184E38] hover:text-[#123E2C] hover:underline transition-colors cursor-pointer"
+                    >
+                      Create an account
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{' '}
+                    <button
+                      type="button"
+                      onClick={() => handleTabSwitch('login')}
+                      className="font-semibold text-[#184E38] hover:text-[#123E2C] hover:underline transition-colors cursor-pointer"
+                    >
+                      Sign in
+                    </button>
+                  </>
+                )}
               </div>
 
-              {/* Password */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Password
-                  </label>
-                </div>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-xs"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none p-1"
-                    title={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Submit CTA */}
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                className="w-full mt-2 py-3 font-semibold shadow-lg shadow-blue-500/25"
-                loading={loading}
-              >
-                <span>Sign In to Dashboard</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
+              {/* Trust Badge / Security Microcopy */}
+              <p className="text-[11px] text-stone-400 text-center pt-2 leading-relaxed max-w-[280px] mx-auto">
+                Your place is private. We use secure encryption and never sell your data.
+              </p>
             </form>
+          </motion.div>
+        </section>
+      </main>
 
-            {/* Footer Registration Link */}
-            <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800/80 text-center text-xs text-slate-500 dark:text-slate-400">
-              Don't have an organization registered?{' '}
-              <Link
-                to="/organization/register"
-                className="font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
-              >
-                Register Here
-              </Link>
-            </div>
-
-            {/* Encrypted session note */}
-            <div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              <span>256-bit encrypted session</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Subtle bottom spacing */}
+      <footer className="w-full max-w-7xl mx-auto py-2" />
     </div>
   );
 };

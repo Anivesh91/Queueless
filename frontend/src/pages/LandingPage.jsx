@@ -158,17 +158,12 @@ export const LandingPage = () => {
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
               <Link
-                to="/organization/register"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm font-bold text-slate-950 bg-white hover:bg-slate-100 rounded-xl transition-all shadow-lg"
-              >
-                <span>Register Organization</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
                 to="/organization/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 text-sm font-bold text-slate-950 bg-white hover:bg-slate-100 rounded-xl transition-all shadow-lg cursor-pointer"
               >
-                Owner Login
+                <Building2 className="w-4 h-4 text-blue-600" />
+                <span>Owner Portal</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

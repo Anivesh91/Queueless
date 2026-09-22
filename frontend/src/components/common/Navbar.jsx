@@ -11,6 +11,10 @@ export const Navbar = () => {
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
 
+  if (location.pathname === '/organization/login' || location.pathname === '/organization/register') {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -99,15 +103,9 @@ export const Navbar = () => {
             <div className="flex items-center gap-2">
               <Link
                 to="/organization/login"
-                className="px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-              >
-                Owner Login
-              </Link>
-              <Link
-                to="/organization/register"
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 rounded-lg shadow-sm shadow-blue-500/20 transition-all hover:shadow"
               >
-                <span>For Business</span>
+                <span>Owner Portal</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

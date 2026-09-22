@@ -6,8 +6,6 @@ import { SearchResultsPage } from '../pages/customer/SearchResultsPage';
 import { PublicOrgPage } from '../pages/customer/PublicOrgPage';
 import { ServiceQueuePage } from '../pages/customer/ServiceQueuePage';
 import { TicketTrackerPage } from '../pages/customer/TicketTrackerPage';
-import { OrgEntryPage } from '../pages/organization/OrgEntryPage';
-import { RegisterPage } from '../pages/organization/RegisterPage';
 import { LoginPage } from '../pages/organization/LoginPage';
 import { OrgSetupPage } from '../pages/organization/OrgSetupPage';
 import { DashboardPage } from '../pages/organization/DashboardPage';
@@ -30,9 +28,9 @@ export const AppRoutes = () => {
       <Route path="/customer/tickets/:publicToken" element={<TicketTrackerPage />} />
 
       {/* Public Organization Auth Routes */}
-      <Route path="/organization" element={<OrgEntryPage />} />
-      <Route path="/organization/register" element={<RegisterPage />} />
-      <Route path="/organization/login" element={<LoginPage />} />
+      <Route path="/organization" element={<Navigate to="/organization/login" replace />} />
+      <Route path="/organization/register" element={<LoginPage initialMode="register" />} />
+      <Route path="/organization/login" element={<LoginPage initialMode="login" />} />
 
       {/* Protected Owner Routes */}
       <Route element={<ProtectedRoute />}>
