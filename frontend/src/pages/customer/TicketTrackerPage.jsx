@@ -457,15 +457,60 @@ export const TicketTrackerPage = () => {
           </div>
         </motion.div>
 
-        {/* The Digital Boarding Pass Ticket Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 24, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full bg-white rounded-[32px] shadow-[0_25px_60px_-15px_rgba(25,35,30,0.08)] border border-stone-100/90 overflow-hidden relative"
-        >
-          {/* Top Organization & Service Header */}
-          <div className="px-6 sm:px-8 pt-7 pb-5 bg-gradient-to-b from-[#FAF8F3]/80 to-white flex items-center justify-between border-b border-stone-100">
+        {/* The Digital Boarding Pass Ticket Card with Ambient Radiant Halo */}
+        <div className="relative group">
+          {/* 1. Multi-layered Ambient Breathing Aura / Halo */}
+          <motion.div
+            className={`absolute -inset-1.5 sm:-inset-2 rounded-[38px] blur-2xl pointer-events-none transition-all duration-700 ${
+              status === 'CALLED'
+                ? 'bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-500'
+                : status === 'COMPLETED'
+                ? 'bg-gradient-to-r from-emerald-300/40 via-teal-200/40 to-emerald-400/40'
+                : 'bg-gradient-to-tr from-[#184E38]/20 via-[#D95D39]/15 to-[#2D5A43]/25'
+            }`}
+            animate={
+              status === 'CALLED'
+                ? { scale: [1, 1.04, 1], opacity: [0.75, 1, 0.75] }
+                : { scale: [1, 1.02, 1], opacity: [0.3, 0.55, 0.3] }
+            }
+            transition={{
+              duration: status === 'CALLED' ? 1.8 : 4,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+
+          {/* 2. Floating Micro-Badge around Ticket Card */}
+          <motion.div
+            className="hidden sm:flex absolute -top-3 -right-2 z-20 items-center gap-1.5 px-3 py-1 bg-white/95 rounded-full border border-stone-200/80 shadow-md text-[10px] font-bold text-[#184E38] backdrop-blur-md"
+            animate={{ y: [0, -3.5, 0] }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Sparkles className="w-3 h-3 text-amber-500" />
+            <span>Live Pass Verified</span>
+          </motion.div>
+
+          {/* 3. The Digital Boarding Pass Ticket Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            whileHover={{ y: -4, transition: { duration: 0.3 } }}
+            transition={{ duration: 0.65, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className={`w-full bg-white rounded-[32px] shadow-[0_25px_60px_-15px_rgba(25,35,30,0.08)] overflow-hidden relative transition-all duration-300 ${
+              status === 'CALLED'
+                ? 'border-2 border-emerald-500/80 shadow-[0_30px_70px_-10px_rgba(24,78,56,0.25)]'
+                : 'border border-stone-100/90 hover:shadow-[0_30px_70px_-12px_rgba(25,35,30,0.12)]'
+            }`}
+          >
+            {/* Laminated Glass Shimmer Streak */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -skew-x-12 pointer-events-none z-10"
+              animate={{ x: ['-150%', '250%'] }}
+              transition={{ repeat: Infinity, repeatDelay: 6, duration: 2, ease: 'easeInOut' }}
+            />
+
+            {/* Top Organization & Service Header */}
+            <div className="px-6 sm:px-8 pt-7 pb-5 bg-gradient-to-b from-[#FAF8F3]/80 to-white flex items-center justify-between border-b border-stone-100">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-[#184E38] text-white flex items-center justify-center shadow-xs">
                 <Building2 className="w-5 h-5 text-emerald-200" />
@@ -746,6 +791,7 @@ export const TicketTrackerPage = () => {
             </div>
           </div>
         </motion.div>
+        </div>
       </main>
 
       {/* Clean Bottom Footer */}
