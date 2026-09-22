@@ -88,7 +88,8 @@ export const ActiveTicketBanner = () => {
     !activeTicket ||
     dismissed ||
     location.pathname === '/organization/login' ||
-    location.pathname === '/organization/register'
+    location.pathname === '/organization/register' ||
+    location.pathname.startsWith('/customer/tickets/')
   )
     return null;
 

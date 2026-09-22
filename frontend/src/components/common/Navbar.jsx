@@ -11,7 +11,12 @@ export const Navbar = () => {
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
 
-  if (location.pathname === '/organization/login' || location.pathname === '/organization/register') {
+  const isAuthOrTicketPage =
+    location.pathname === '/organization/login' ||
+    location.pathname === '/organization/register' ||
+    location.pathname.startsWith('/customer/tickets/');
+
+  if (isAuthOrTicketPage) {
     return null;
   }
 
