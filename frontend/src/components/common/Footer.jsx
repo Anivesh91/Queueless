@@ -1,8 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Users } from 'lucide-react';
 
 export const Footer = () => {
+  const location = useLocation();
+
+  if (location.pathname === '/organization/login' || location.pathname === '/organization/register') {
+    return null;
+  }
+
   return (
     <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 mt-auto transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

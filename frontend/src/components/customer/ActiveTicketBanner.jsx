@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ticketApi } from '../../api/ticketApi';
 import { useSocket } from '../../context/SocketContext';
 import { Ticket, ArrowRight, X } from 'lucide-react';
 
 export const ActiveTicketBanner = () => {
+  const location = useLocation();
   const { socket } = useSocket();
   const [activeTicket, setActiveTicket] = useState(null);
   const [dismissed, setDismissed] = useState(false);
@@ -83,7 +84,13 @@ export const ActiveTicketBanner = () => {
     };
   }, [socket, activeTicket]);
 
-  if (!activeTicket || dismissed) return null;
+  if (
+    !activeTicket ||
+    dismissed ||
+    location.pathname === '/organization/login' ||
+    location.pathname === '/organization/register'
+  )
+    return null;
 
   return (
     <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white px-4 py-2.5 shadow-md relative z-40 animate-in slide-in-from-top duration-200">
