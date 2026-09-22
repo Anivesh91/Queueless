@@ -1,15 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ink: 17 24 39;
+  --paper: 248 250 252;
+  --accent: 20 184 166;
+  --accent-deep: 13 148 136;
+}
+
 @layer base {
-  html {
-    @apply antialiased;
-  }
+  html { @apply antialiased; }
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen antialiased transition-colors duration-150;
+    @apply min-h-screen antialiased transition-colors duration-150;
+    background: rgb(var(--paper));
+    color: rgb(var(--ink));
+    font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+  button, input, select, textarea { font: inherit; }
+}
+
+@layer components {
+  .eyebrow { @apply font-mono text-[10px] font-medium uppercase tracking-[0.22em] text-teal-700 dark:text-teal-300; }
+  .display-heading { @apply font-extrabold tracking-[-0.06em] leading-[0.95]; }
+  .surface-grid { background-image: linear-gradient(rgba(15,23,42,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,.06) 1px, transparent 1px); background-size: 36px 36px; }
+  .dark .surface-grid { background-image: linear-gradient(rgba(148,163,184,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,.08) 1px, transparent 1px); }
 }
 
 /* Pulse glow effect for live status */

@@ -29,18 +29,18 @@ export const LandingPage = () => {
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-24 lg:pt-24 lg:pb-32 bg-gradient-to-b from-blue-50/70 via-white to-white dark:from-slate-900/60 dark:via-slate-950 dark:to-slate-950 transition-colors duration-200">
+      <section className="relative overflow-hidden pt-20 pb-24 lg:pt-28 lg:pb-36 bg-slate-50 dark:bg-slate-950 surface-grid transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100/80 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-semibold uppercase tracking-wider mb-8 shadow-xs">
+          <div className="eyebrow inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 mb-8 shadow-xs">
             <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>Next-Gen Virtual Queuing</span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight max-w-4xl mx-auto leading-[1.1]">
+          <h1 className="display-heading text-5xl sm:text-7xl lg:text-8xl text-slate-950 dark:text-white max-w-5xl mx-auto">
             Skip the line.{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+            <span className="text-teal-600 dark:text-teal-400">
               Join virtually.
             </span>
           </h1>
@@ -50,10 +50,10 @@ export const LandingPage = () => {
           </p>
 
           {/* Search Bar for Customers */}
-          <div className="mt-10 max-w-xl mx-auto">
+          <div className="mt-10 max-w-2xl mx-auto">
             <form
               onSubmit={handleSearch}
-              className="p-2 bg-white dark:bg-slate-900 rounded-2xl shadow-xl shadow-slate-200/60 dark:shadow-black/40 border border-slate-200/80 dark:border-slate-800 flex items-center gap-2"
+              className="p-2 bg-white/90 dark:bg-slate-900/90 rounded-2xl shadow-2xl shadow-slate-300/30 dark:shadow-black/40 border border-slate-300 dark:border-slate-700 flex items-center gap-2"
             >
               <div className="pl-3 text-slate-400 dark:text-slate-500">
                 <Search className="w-5 h-5" />
