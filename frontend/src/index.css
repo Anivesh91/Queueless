@@ -8,8 +8,14 @@
     @apply antialiased;
   }
   body {
-    @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen antialiased transition-colors duration-150;
+    @apply bg-[#F5F2EB] text-[#1C2520] dark:bg-[#131B17] dark:text-[#E8EFEA] min-h-screen antialiased transition-colors duration-150;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    selection-background-color: #184E38;
+  }
+
+  ::selection {
+    background-color: #184E38;
+    color: #ffffff;
   }
 
   /* Slim Aesthetic Scrollbar */
@@ -29,19 +35,19 @@
   }
 }
 
-/* Pulse glow effect for live status */
+/* Pulse glow effect for live status in Forest Green */
 @keyframes live-ping {
   0% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+    box-shadow: 0 0 0 0 rgba(24, 78, 56, 0.7);
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 10px rgba(24, 78, 56, 0);
   }
   100% {
     transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 0 rgba(24, 78, 56, 0);
   }
 }
 

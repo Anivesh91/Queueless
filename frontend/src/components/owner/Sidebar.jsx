@@ -22,15 +22,15 @@ export const Sidebar = ({ organization }) => {
   ];
 
   return (
-    <aside className="w-full md:w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 min-h-[calc(100vh-4rem)] p-4 flex flex-col justify-between shrink-0 transition-colors duration-200">
+    <aside className="w-full md:w-64 bg-white dark:bg-stone-900 border-r border-stone-200/80 dark:border-stone-800 min-h-[calc(100vh-4rem)] p-4 sm:p-5 flex flex-col justify-between shrink-0 transition-colors duration-200">
       <div className="space-y-6">
-        {/* Org Banner */}
+        {/* Org Banner Card */}
         {organization && (
-          <div className="p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 rounded-xl">
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Active Organization
+          <div className="p-4 bg-[#FAF8F3] dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/80 rounded-2xl">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-[#3F6451] dark:text-[#A7D7BC]">
+              Active Business
             </div>
-            <div className="text-sm font-bold text-slate-900 dark:text-white truncate mt-0.5">
+            <div className="font-serif text-base font-normal text-[#1A231E] dark:text-white truncate mt-0.5">
               {organization.name}
             </div>
             {organization.slug && (
@@ -38,9 +38,9 @@ export const Sidebar = ({ organization }) => {
                 href={`/customer/organizations/${organization.slug}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium mt-2"
+                className="inline-flex items-center gap-1.5 text-xs text-[#184E38] dark:text-[#A7D7BC] hover:underline font-semibold mt-2.5"
               >
-                <span>View Public Page</span>
+                <span>View Storefront</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}
@@ -48,7 +48,7 @@ export const Sidebar = ({ organization }) => {
         )}
 
         {/* Navigation Links */}
-        <nav className="space-y-1">
+        <nav className="space-y-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -56,10 +56,10 @@ export const Sidebar = ({ organization }) => {
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                     isActive
-                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 font-semibold shadow-xs'
-                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
+                      ? 'bg-[#E2EDE7] dark:bg-[#184E38]/40 text-[#184E38] dark:text-[#E2EDE7] shadow-2xs border border-[#C5DCCF]/70 dark:border-[#2D5A43]'
+                      : 'text-[#59665F] dark:text-stone-300 hover:bg-[#FAF8F3] dark:hover:bg-stone-800 hover:text-[#184E38] dark:hover:text-white'
                   }`
                 }
               >
@@ -72,11 +72,11 @@ export const Sidebar = ({ organization }) => {
       </div>
 
       {/* Live System Indicator */}
-      <div className="p-3 bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-900/50 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
-        <Radio className="w-4 h-4 text-emerald-600 dark:text-emerald-400 animate-pulse shrink-0" />
+      <div className="p-3.5 bg-[#E2EDE7]/60 dark:bg-[#184E38]/20 border border-[#C5DCCF]/60 dark:border-[#2D5A43] rounded-2xl text-xs text-[#184E38] dark:text-[#A7D7BC] flex items-center gap-2.5">
+        <Radio className="w-4 h-4 text-[#184E38] dark:text-[#A7D7BC] animate-pulse shrink-0" />
         <div>
-          <div className="font-bold text-[11px]">Real-Time Active</div>
-          <div className="text-[10px] text-emerald-600 dark:text-emerald-400">Syncing live queue events</div>
+          <div className="font-bold text-[11px] tracking-wide">Real-Time Sync Active</div>
+          <div className="text-[10px] text-[#3F6451] dark:text-[#8BC5A7]">Connected to Socket.IO</div>
         </div>
       </div>
     </aside>

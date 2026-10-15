@@ -24,20 +24,20 @@ export const Modal = ({ isOpen, onClose, title, children, maxWidth = 'max-w-md' 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/60 dark:bg-black/75 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-[#131B17]/60 dark:bg-black/75 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
       <div
-        className={`relative w-full ${maxWidth} bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-150 text-slate-900 dark:text-slate-100`}
+        className={`relative w-full ${maxWidth} bg-white dark:bg-stone-900 rounded-[32px] shadow-soft-lift border border-stone-200/80 dark:border-stone-800 overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-150 text-[#1C2520] dark:text-[#E8EFEA]`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
-          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">{title}</h3>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-stone-200/60 dark:border-stone-800 bg-[#FAF8F3]/60 dark:bg-stone-800/40">
+          <h3 className="font-serif text-xl font-normal text-[#1A231E] dark:text-white">{title}</h3>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1 rounded-xl text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 hover:bg-[#EBE4D5]/50 dark:hover:bg-stone-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

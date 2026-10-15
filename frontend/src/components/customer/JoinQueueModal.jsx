@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import { queueApi } from '../../api/queueApi';
-import { User, Phone, AlertCircle, Ticket, Clock, CheckCircle2 } from 'lucide-react';
+import { User, Phone, AlertCircle, Ticket, Clock, ShieldCheck } from 'lucide-react';
 
 export const JoinQueueModal = ({ isOpen, onClose, service }) => {
   const navigate = useNavigate();
@@ -39,7 +39,6 @@ export const JoinQueueModal = ({ isOpen, onClose, service }) => {
       const publicToken = data?.publicToken || data?.ticket?.publicToken;
 
       if (publicToken) {
-        // Save to local storage for quick recovery
         try {
           const saved = JSON.parse(localStorage.getItem('queueless_active_tickets') || '[]');
           const filtered = saved.filter((t) => t.publicToken !== publicToken);
@@ -72,27 +71,27 @@ export const JoinQueueModal = ({ isOpen, onClose, service }) => {
     <Modal isOpen={isOpen} onClose={onClose} title="Join Virtual Queue">
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Service Highlight */}
-        <div className="p-3.5 bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/50 rounded-xl">
-          <div className="text-xs font-semibold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+        <div className="p-4 bg-[#FAF8F3] dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/80 rounded-2xl">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-[#3F6451] dark:text-[#A7D7BC]">
             Selected Service
           </div>
-          <div className="text-base font-bold text-slate-900 dark:text-slate-100 mt-0.5">
+          <div className="font-serif text-lg font-normal text-[#1A231E] dark:text-white mt-0.5">
             {service.name}
           </div>
-          <div className="flex items-center gap-4 text-xs text-slate-600 dark:text-slate-400 mt-1.5 font-medium">
-            <span className="flex items-center gap-1">
-              <Ticket className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              Prefix: <strong className="font-mono text-slate-800 dark:text-slate-200">{service.ticketPrefix}</strong>
+          <div className="flex items-center gap-4 text-xs text-[#59665F] dark:text-stone-300 mt-2 font-medium">
+            <span className="flex items-center gap-1.5">
+              <Ticket className="w-3.5 h-3.5 text-[#184E38] dark:text-[#A7D7BC]" />
+              Prefix: <strong className="font-mono text-[#184E38] dark:text-[#A7D7BC] bg-[#E2EDE7] dark:bg-[#184E38]/40 px-1.5 py-0.5 rounded">{service.ticketPrefix}</strong>
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-              Avg time: ~{service.averageServiceTime || 10}m
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-[#D95D39] dark:text-[#F8A084]" />
+              Avg wait: ~{service.averageServiceTime || 10}m
             </span>
           </div>
         </div>
 
         {error && (
-          <div className="p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 text-xs flex items-start gap-2">
+          <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-start gap-2 shadow-2xs">
             <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -100,45 +99,46 @@ export const JoinQueueModal = ({ isOpen, onClose, service }) => {
 
         {/* Customer Name */}
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-            Your Name <span className="text-rose-500">*</span>
+          <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">
+            Your Full Name <span className="text-rose-500">*</span>
           </label>
           <div className="relative">
-            <User className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <User className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Aman Sharma"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 placeholder:text-stone-300 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
             />
           </div>
         </div>
 
         {/* Customer Phone */}
         <div>
-          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+          <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">
             Mobile Phone Number <span className="text-rose-500">*</span>
           </label>
           <div className="relative">
-            <Phone className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Phone className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="tel"
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="e.g. 9876543210"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 placeholder:text-stone-300 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
             />
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-            If you already have a ticket with this phone number, you will instantly restore your existing spot in line.
+          <p className="text-[11px] text-[#59665F] dark:text-stone-400 mt-1.5 flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#184E38] dark:text-[#A7D7BC] shrink-0" />
+            <span>Used only for your live turn chime. Zero spam.</span>
           </p>
         </div>
 
         {/* Buttons */}
-        <div className="pt-3 flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+        <div className="pt-3 flex items-center justify-end gap-3 border-t border-stone-200/60 dark:border-stone-800">
           <Button variant="secondary" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
