@@ -94,27 +94,27 @@ export const ActiveTicketBanner = () => {
     return null;
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white px-4 py-2.5 shadow-md relative z-40 animate-in slide-in-from-top duration-200">
+    <div className="bg-[#184E38] text-[#F5F2EB] px-4 py-2.5 shadow-sm border-b border-[#2D5A43] relative z-40 animate-in slide-in-from-top duration-200">
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
         <div className="flex items-center gap-2.5">
           <span className="flex h-2.5 w-2.5 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-300" />
           </span>
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-semibold text-blue-100 uppercase tracking-wider text-[10px]">
+            <span className="font-semibold text-[#C5DCCF] uppercase tracking-wider text-[10px]">
               Active Ticket:
             </span>
-            <span className="font-mono font-bold bg-white/20 px-2 py-0.5 rounded-md text-white">
+            <span className="font-mono font-bold bg-white/15 px-2 py-0.5 rounded-md text-white border border-white/20">
               {activeTicket.ticketNumber}
             </span>
             {activeTicket.organizationName && (
-              <span className="text-blue-100">
+              <span className="text-[#E2EDE7]">
                 at <strong>{activeTicket.organizationName}</strong>
               </span>
             )}
             {activeTicket.serviceName && (
-              <span className="text-blue-200 hidden md:inline">
+              <span className="text-[#C5DCCF] hidden md:inline">
                 ({activeTicket.serviceName})
               </span>
             )}
@@ -124,16 +124,16 @@ export const ActiveTicketBanner = () => {
         <div className="flex items-center gap-3">
           <Link
             to={`/customer/tickets/${activeTicket.publicToken}`}
-            className="inline-flex items-center gap-1 bg-white text-blue-700 font-bold px-3 py-1 rounded-lg hover:bg-blue-50 transition-colors shadow-xs"
+            className="inline-flex items-center gap-1 bg-[#FAF8F3] text-[#184E38] font-semibold px-3 py-1 rounded-lg hover:bg-white transition-all shadow-2xs hover:scale-[1.02] active:scale-95"
           >
-            <span> Live Ticket Tracker</span>
+            <span>Live Ticket Tracker</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <button
             onClick={() => {
               setDismissed(true);
             }}
-            className="text-blue-200 hover:text-white p-0.5 rounded-md focus:outline-none cursor-pointer"
+            className="text-[#C5DCCF] hover:text-white p-0.5 rounded-md focus:outline-none cursor-pointer"
             title="Dismiss banner"
           >
             <X className="w-4 h-4" />

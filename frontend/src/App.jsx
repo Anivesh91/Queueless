@@ -18,7 +18,7 @@ export const App = () => {
         <ThemeProvider>
           <AuthProvider>
             <SocketProvider>
-              <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200">
+              <div className="flex flex-col min-h-screen bg-[#F5F2EB] text-[#1C2520] dark:bg-[#131B17] dark:text-[#E8EFEA] transition-colors duration-200">
                 <Navbar />
                 <ActiveTicketBanner />
                 <div className="flex-1">

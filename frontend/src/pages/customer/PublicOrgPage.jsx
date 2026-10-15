@@ -6,13 +6,11 @@ import { JoinQueueModal } from '../../components/customer/JoinQueueModal';
 import { LoadingSkeleton } from '../../components/common/LoadingSkeleton';
 import { useSocket } from '../../context/SocketContext';
 import {
-  Building2,
   MapPin,
   Phone,
   ArrowLeft,
   Layers,
   AlertCircle,
-  Clock,
   Radio,
 } from 'lucide-react';
 
@@ -42,12 +40,10 @@ export const PublicOrgPage = () => {
     fetchOrganization(false);
   }, [slug, fetchOrganization]);
 
-  // Listen to live queue events to keep service counts and statuses in sync
   useEffect(() => {
     if (!socket) return;
 
     const handleStatusChanged = (payload) => {
-      // Optimistically update service queue status in state
       setOrganization((prev) => {
         if (!prev || !prev.services) return prev;
         const updatedServices = prev.services.map((srv) => {
@@ -110,11 +106,11 @@ export const PublicOrgPage = () => {
     return (
       <div className="max-w-md mx-auto px-4 py-16 text-center">
         <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-3" />
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">Organization Not Found</h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{error || 'This organization does not exist or is inactive.'}</p>
+        <h2 className="font-serif text-2xl font-normal text-[#1A231E] dark:text-white">Organization Not Found</h2>
+        <p className="text-xs text-[#59665F] dark:text-stone-400 mt-2">{error || 'This organization does not exist or is inactive.'}</p>
         <Link
           to="/customer"
-          className="inline-block mt-4 px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white text-xs font-semibold rounded-xl"
+          className="inline-block mt-6 px-5 py-2.5 bg-[#184E38] hover:bg-[#123E2C] text-white text-xs font-semibold rounded-xl shadow-xs transition-all"
         >
           Return to Queue Finder
         </Link>
@@ -136,41 +132,41 @@ export const PublicOrgPage = () => {
       {/* Back button */}
       <Link
         to="/customer"
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors"
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#59665F] dark:text-stone-400 hover:text-[#184E38] dark:hover:text-[#A7D7BC] mb-6 transition-colors"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-3.5 h-3.5" />
         <span>Back to Queue Directory</span>
       </Link>
 
       {/* Organization Header Banner */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm mb-10 transition-colors duration-200">
+      <div className="bg-white dark:bg-stone-900 rounded-3xl p-6 sm:p-10 border border-stone-200/80 dark:border-stone-800 shadow-soft-float mb-10 transition-colors duration-200">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <span className="text-xs font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-3 py-1 rounded-full border border-blue-100 dark:border-blue-900/50 uppercase tracking-wider">
+            <span className="text-[10px] font-bold text-[#184E38] dark:text-[#A7D7BC] bg-[#E2EDE7] dark:bg-[#184E38]/30 px-3 py-1 rounded-full border border-[#C5DCCF]/60 dark:border-[#2D5A43] uppercase tracking-wider">
               {categoryLabels[organization.category] || organization.category}
             </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-2">
+            <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A231E] dark:text-white mt-3">
               {organization.name}
             </h1>
             {organization.description && (
-              <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 max-w-2xl leading-relaxed">
+              <p className="text-sm text-[#59665F] dark:text-stone-300 mt-2 max-w-2xl leading-relaxed">
                 {organization.description}
               </p>
             )}
 
             {/* Location & Phone */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mt-4">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-[#59665F] dark:text-stone-400 mt-5">
               {organization.city && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#184E38] dark:text-[#A7D7BC]" />
                   <span>
                     {organization.city} {organization.address && `— ${organization.address}`}
                   </span>
                 </div>
               )}
               {organization.phone && (
-                <div className="flex items-center gap-1">
-                  <Phone className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                <div className="flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-[#184E38] dark:text-[#A7D7BC]" />
                   <span>{organization.phone}</span>
                 </div>
               )}
@@ -183,12 +179,15 @@ export const PublicOrgPage = () => {
       <div>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Available Service Queues</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Select a service below to join its virtual queue and secure your position.
+            <span className="text-[11px] font-bold tracking-[0.2em] text-[#3F6451] dark:text-[#A7D7BC] uppercase">
+              SELECT A SERVICE
+            </span>
+            <h2 className="font-serif text-2xl font-normal text-[#1A231E] dark:text-white mt-1">Available Service Queues</h2>
+            <p className="text-xs text-[#59665F] dark:text-stone-400 mt-0.5">
+              Select a queue below to join remotely with just your name and phone.
             </p>
           </div>
-          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">
+          <span className="text-xs font-semibold text-[#184E38] dark:text-[#A7D7BC] bg-[#E2EDE7]/70 dark:bg-[#184E38]/30 px-3.5 py-1.5 rounded-full border border-[#C5DCCF]/60 dark:border-[#2D5A43]">
             {organization.services?.length || 0} Available
           </span>
         </div>
@@ -204,11 +203,11 @@ export const PublicOrgPage = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-10 text-center border border-slate-200 dark:border-slate-800">
-            <Layers className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200">No Services Available</h3>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-              This organization does not currently have any active services configured.
+          <div className="bg-white dark:bg-stone-900 rounded-3xl p-10 text-center border border-stone-200/80 dark:border-stone-800 shadow-soft-float">
+            <Layers className="w-10 h-10 text-stone-300 dark:text-stone-600 mx-auto mb-2" />
+            <h3 className="font-serif text-base font-normal text-[#1A231E] dark:text-white">No Services Available</h3>
+            <p className="text-xs text-[#59665F] dark:text-stone-400 mt-1">
+              This organization does not currently have any active queues open.
             </p>
           </div>
         )}

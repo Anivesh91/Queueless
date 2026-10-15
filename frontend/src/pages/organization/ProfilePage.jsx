@@ -4,12 +4,12 @@ import { Sidebar } from '../../components/owner/Sidebar';
 import { Button } from '../../components/common/Button';
 import { LoadingSkeleton } from '../../components/common/LoadingSkeleton';
 import {
-  Building2,
   ExternalLink,
   Save,
   CheckCircle2,
   AlertCircle,
   Copy,
+  Sparkles,
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -95,8 +95,8 @@ export const ProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)]">
-        <div className="w-64 hidden md:block bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4">
+      <div className="flex min-h-[calc(100vh-4rem)] bg-[#F5F2EB] dark:bg-[#131B17]">
+        <div className="w-64 hidden md:block bg-white dark:bg-stone-900 border-r border-stone-200 dark:border-stone-800 p-4">
           <LoadingSkeleton lines={4} />
         </div>
         <div className="flex-1 p-8">
@@ -107,27 +107,31 @@ export const ProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)] bg-[#F5F2EB] text-[#1C2520] dark:bg-[#131B17] dark:text-[#E8EFEA] transition-colors duration-200">
       <Sidebar organization={organization} />
 
       <main className="flex-1 p-6 sm:p-8 lg:p-10 max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <span className="text-[11px] font-bold tracking-[0.2em] text-[#3F6451] dark:text-[#A7D7BC] uppercase">
+            BRAND & PROFILE
+          </span>
+          <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A231E] dark:text-white mt-1 tracking-tight">
             Organization Profile
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Update your public business identity and preview customer links.
+          <p className="text-xs sm:text-sm text-[#59665F] dark:text-stone-400 mt-1">
+            Update your business identity, location, and shareable customer queue link.
           </p>
         </div>
 
         {/* Public Link Card */}
         {organization?.slug && (
-          <div className="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border border-blue-100 dark:border-blue-900/50 rounded-2xl mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-5 sm:p-6 bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 rounded-[24px] shadow-soft-float mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="text-[11px] font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300">
-                Your Public Customer URL
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#3F6451] dark:text-[#A7D7BC] flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#184E38] dark:text-[#A7D7BC]" />
+                <span>Your Customer Storefront Link</span>
               </div>
-              <div className="text-xs text-slate-600 dark:text-slate-300 font-mono mt-1 break-all select-all">
+              <div className="text-xs text-[#184E38] dark:text-[#A7D7BC] font-mono mt-1 break-all select-all font-semibold">
                 {publicUrl}
               </div>
             </div>
@@ -135,7 +139,7 @@ export const ProfilePage = () => {
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="px-3 py-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 bg-white dark:bg-slate-800 border border-blue-200 dark:border-slate-700 rounded-xl hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="px-3.5 py-2 text-xs font-semibold text-[#184E38] dark:text-[#A7D7BC] bg-[#E2EDE7] dark:bg-[#184E38]/30 border border-[#C5DCCF]/70 dark:border-[#2D5A43] rounded-xl hover:bg-[#C5DCCF] transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
               >
                 <Copy className="w-3.5 h-3.5" />
                 <span>{copiedLink ? 'Copied!' : 'Copy Link'}</span>
@@ -144,7 +148,7 @@ export const ProfilePage = () => {
                 href={publicUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-xl hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-2 text-xs font-semibold text-white bg-[#184E38] hover:bg-[#123E2C] rounded-xl transition-all flex items-center gap-1.5 shadow-2xs active:scale-95"
               >
                 <span>Visit Page</span>
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -153,25 +157,25 @@ export const ProfilePage = () => {
           </div>
         )}
 
-        {/* Form */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
+        {/* Form Card */}
+        <div className="bg-white dark:bg-stone-900 rounded-[28px] p-8 border border-stone-200/80 dark:border-stone-800 shadow-soft-float transition-colors duration-200">
           {successMsg && (
-            <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2 mb-6">
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center gap-2 mb-6 shadow-2xs">
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
               <span>{successMsg}</span>
             </div>
           )}
 
           {errorMsg && (
-            <div className="p-3.5 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2 mb-6">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-center gap-2 mb-6 shadow-2xs">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">
                 Organization Name <span className="text-rose-500">*</span>
               </label>
               <input
@@ -179,18 +183,18 @@ export const ProfilePage = () => {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 bg-[#FAF8F3] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 focus:bg-white dark:focus:bg-stone-800 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">
                 Category <span className="text-rose-500">*</span>
               </label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2.5 bg-[#FAF8F3] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 focus:bg-white dark:focus:bg-stone-800 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat.id} value={cat.id}>
@@ -202,48 +206,52 @@ export const ProfilePage = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">City</label>
+                <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">City</label>
                 <input
                   type="text"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g. Mumbai"
+                  className="w-full px-4 py-2.5 bg-[#FAF8F3] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 focus:bg-white dark:focus:bg-stone-800 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone</label>
+                <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">Contact Phone</label>
                 <input
                   type="text"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g. +91 98765 43210"
+                  className="w-full px-4 py-2.5 bg-[#FAF8F3] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 focus:bg-white dark:focus:bg-stone-800 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Address</label>
+              <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">Address</label>
               <input
                 type="text"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="e.g. Shop 4, Galleria Mall"
+                className="w-full px-4 py-2.5 bg-[#FAF8F3] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 focus:bg-white dark:focus:bg-stone-800 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">About / Description</label>
+              <label className="block text-xs font-semibold text-[#37433C] dark:text-stone-300 mb-1.5">About / Description</label>
               <textarea
                 rows={3}
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Brief introduction for your customer queue page..."
+                className="w-full px-4 py-2.5 bg-[#FAF8F3] dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl text-sm text-[#1A231E] dark:text-stone-100 focus:bg-white dark:focus:bg-stone-800 focus:outline-none focus:border-[#184E38] focus:ring-2 focus:ring-[#184E38]/20 transition-all shadow-2xs"
               />
             </div>
 
             <div className="pt-4 flex justify-end">
               <Button type="submit" variant="primary" loading={saving}>
-                <Save className="w-4 h-4" />
+                <Save className="w-4 h-4 mr-1.5" />
                 <span>Save Profile Changes</span>
               </Button>
             </div>
