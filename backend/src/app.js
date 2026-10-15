@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
 const routes = require('./routes');
 const errorHandler = require('./middlewares/errorMiddleware');
 const ApiError = require('./utils/apiError');
@@ -43,6 +44,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(mongoSanitize());
 app.use(cookieParser(process.env.COOKIE_SECRET || 'queueless_cookie_secret'));
 
 app.get('/', (req, res) => {
